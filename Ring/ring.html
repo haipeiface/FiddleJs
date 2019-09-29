@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title></title>
+<meta charset="utf-8">
+</head>
+<body>
+</body>
+<script type="x-shader/x-vertex" id="vertexShader">
+    attribute vec3 center;
+    varying vec3 vCenter;
+
+    void main() {
+        vCenter = center;
+        gl_Position = projectionMatrix * modelViewMatrix * vec4(position, 1.0);
+    }
+</script>
+<script type="x-shader/x-fragment" id="fragmentShader">
+    #extension GL_OES_standard_derivatives: enable
+
+    varying vec3 vCenter;
+
+    float edgeFactorTri() {
+        vec3 d = fwidth(vCenter.xyz);
+        vec3 a3 = smoothstep(vec3(0.0), d * 1.5, vCenter.xyz);
+        return min(min(a3.x, a3.y), a3.z);
+    }
+
+    void main() {
+        gl_FragColor.rgb = mix(vec3(0.659, 0.733, 0.749), vec3(1.0, 0.949, 0.878), edgeFactorTri());
+        gl_FragColor.a = 1.0;
+    }
+</script>
+<script type="text/javascript" src="lib/three.js"></script>
+<script type="text/javascript" src="ring.js"></script>
+</html>
